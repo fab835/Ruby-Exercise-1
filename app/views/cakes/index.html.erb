@@ -1,0 +1,17 @@
+<%= form_tag cakes_calculate_cake_path(), method: :post do %>
+    <div class="mb-3">
+        <%= label_tag 'receiepe',"receiepe", class: 'form-label' %>
+        <%= text_area_tag :receiepe, params[:receiepe], class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+        <%= label_tag 'ingredients',"ingredients", class: 'form-label' %>
+        <%= text_area_tag :ingredients, params[:ingredients], class: "form-control" %>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Calcular</button>
+<% end %>
+
+<h1>Resultado = <%= @cake_result%> </h1>
+
+
