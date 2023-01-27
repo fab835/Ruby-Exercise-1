@@ -1,17 +1,118 @@
 <%= form_tag cakes_calculate_cake_path(), method: :post do %>
-    <div class="mb-3">
-        <%= label_tag 'recipe',"recipe", class: 'form-label' %>
-        <%= text_area_tag :recipe, params[:recipe], class: "form-control" %>
-    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h4>Recipe:</h4>
+                    <div id="recipe">
+                        <% if params['recipe'].present? %>
+                            <% r_index = 0 %>
+                            <% params['recipe'].each do |r| %>
+                                <% r_index += 1 %>
+                                <div class="row recipe_item <%= "recipe-#{r_index}" %>">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <%= label_tag "recipe[#{r_index}][key]","name", class: "form-label" %>
+                                            <%= text_field_tag "recipe[#{r_index}][key]", params['recipe']["#{r.first}"]['key'], class: "form-control" %>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <%= label_tag "recipe[#{r_index}][value]","amount", class: "form-label" %>
+                                            <%= number_field_tag "recipe[#{r_index}][value]", params['recipe']["#{r.first}"]['value'], class: "form-control" %>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 align-self-center">
+                                        <%= link_to "remove", "javascript:remove_recipe_item(#{r_index})", class: 'link-danger' %>
+                                    </div>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    </div>
+                    <%= link_to "+ item", "javascript:add_recipe_item()", class: 'btn btn-link'%>
+                </div>
+            </div>
+        </div>
 
-    <div class="mb-3">
-        <%= label_tag 'ingredients',"ingredients", class: 'form-label' %>
-        <%= text_area_tag :ingredients, params[:ingredients], class: "form-control" %>
+        <div class="col">
+            <div class="card">
+                <div class="card-body" >
+                    <h4>Ingredients:</h4>
+                    <div id="ingredients">
+                        <% if params['ingredients'].present? %>
+                            <% i_index = 0 %>
+                            <% params['ingredients'].each do |i| %>
+                                <% i_index += 1 %>
+                                <div class="row ingredient_item <%= "ingredients-#{i_index}" %>">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <%= label_tag "ingredients[#{i_index}][key]","name", class: "form-label" %>
+                                            <%= text_field_tag "ingredients[#{i_index}][key]", params['ingredients']["#{i.first}"]['key'], class: "form-control" %>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <%= label_tag "ingredients[#{i_index}][value]","amount", class: 'form-label' %>
+                                            <%= number_field_tag "ingredients[#{i_index}][value]", params['ingredients']["#{i.first}"]['value'], class: "form-control" %>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 align-self-center">
+                                        <%= link_to "remove", "javascript:remove_ingredients_item(#{i_index})", class: 'link-danger' %>
+                                    </div>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    </div>
+                    <%= link_to "+ item", "javascript:add_ingredients_item()", class: 'btn btn-link'%>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <button type="submit" class="btn btn-primary">Calcular</button>
+    <br>
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Calculate</button>
+    </div>
+    <br>
 <% end %>
 
-<h1>Resultado = <%= @cake_result%> </h1>
+<% if @cake_result.present? %>
+    <div class="alert alert-success " role="alert">
+        <h3>Result: </h3>
+        <h4>You can make <%= pluralize(@cake_result, 'cake') %> </h4>
+    </div>
+<% end %>
 
+<script>
+    let total_ingredients = document.getElementsByClassName('ingredient_item').length
+    let total_recipes = document.getElementsByClassName('recipe_item').length
+
+    add_ingredients_item = () => {
+        total_ingredients += 1
+
+        document.getElementById('ingredients').insertAdjacentHTML("beforeend", `<div class="row ingredient_item ingredients-${total_ingredients}"><div class="col"><div class="mb-3"><label class="form-label" for="ingredients_${total_ingredients}_key">name</label><input type="text" name="ingredients[${total_ingredients}][key]" id="ingredients_${total_ingredients}_key" class="form-control"></div></div><div class="col"><div class="mb-3"><label class="form-label" for="ingredients_${total_ingredients}_value">amount</label><input type="number" name="ingredients[${total_ingredients}][value]" id="ingredients_${total_ingredients}_value" class="form-control"></div> </div><div class="col-2 align-self-center"><a class="btn btn-default link-danger" href="javascript:remove_ingredients_item(${total_ingredients})">remove</a></div></div>`);
+
+        return false
+    }
+
+    add_recipe_item = () => {
+        total_recipes += 1
+
+        document.getElementById('recipe').insertAdjacentHTML("beforeend", `<div class="row recipe_item recipe-${total_recipes}"><div class="col"><div class="mb-3"><label class="form-label" for="recipe_${total_recipes}_key">name</label><input type="text" name="recipe[${total_recipes}][key]" id="recipe_${total_recipes}_key" class="form-control"></div></div><div class="col"><div class="mb-3"><label class="form-label" for="recipe_${total_recipes}_value">amount</label><input type="number" name="recipe[${total_recipes}][value]" id="recipe_${total_recipes}_value" class="form-control"></div> </div><div class="col-2 align-self-center"><a class="btn btn-default link-danger" href="javascript:remove_recipe_item(${total_recipes})">remove</a></div></div>`)
+        return false
+    }
+
+    remove_ingredients_item = (item_index) => {
+        const elements = document.getElementsByClassName(`ingredients-${item_index}`);
+        while(elements.length > 0){
+            elements[0].parentNode.removeChild(elements[0]);
+        }
+    }
+
+    remove_recipe_item = (item_index) => {
+        const elements = document.getElementsByClassName(`recipe-${item_index}`);
+        while(elements.length > 0){
+            elements[0].parentNode.removeChild(elements[0]);
+        }
+    }
+</script>
 
