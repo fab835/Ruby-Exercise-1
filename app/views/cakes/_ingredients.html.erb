@@ -1,0 +1,31 @@
+<div class="card">
+    <div class="card-body" >
+        <h4>Ingredients:</h4>
+        <div id="ingredients">
+            <% if params['ingredients'].present? %>
+                <% i_index = 0 %>
+                <% params['ingredients'].each do |i| %>
+                    <% i_index += 1 %>
+                    <div class="row ingredient_item <%= "ingredients-#{i_index}" %>">
+                        <div class="col">
+                            <div class="mb-3">
+                                <%= label_tag "ingredients[#{i_index}][key]","name", class: "form-label" %>
+                                <%= text_field_tag "ingredients[#{i_index}][key]", params['ingredients']["#{i.first}"]['key'], class: "form-control" %>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <%= label_tag "ingredients[#{i_index}][value]","amount", class: 'form-label' %>
+                                <%= number_field_tag "ingredients[#{i_index}][value]", params['ingredients']["#{i.first}"]['value'], class: "form-control" %>
+                            </div>
+                        </div>
+                        <div class="col-2 align-self-center">
+                            <%= link_to "remove", "javascript:remove_ingredients_item(#{i_index})", class: 'link-danger' %>
+                        </div>
+                    </div>
+                <% end %>
+            <% end %>
+        </div>
+        <%= link_to "+ item", "javascript:add_ingredients_item()", class: 'btn btn-link'%>
+    </div>
+</div>

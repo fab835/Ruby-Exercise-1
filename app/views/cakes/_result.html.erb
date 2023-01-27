@@ -1,0 +1,6 @@
+<% if @cake_result.present? %>
+    <div class="alert alert-success " role="alert">
+        <h3>Result: </h3>
+        <h4>You can make <%= pluralize(@cake_result, 'cake') %> </h4>
+    </div>
+<% end %>
